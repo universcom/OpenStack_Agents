@@ -1,6 +1,6 @@
 # OpenStack AI Agent System
 
-A multi-agent AI system for managing OpenStack infrastructure — built on LangGraph + Claude.
+A multi-agent AI system for managing OpenStack infrastructure — built on LangGraph.
 
 ## Architecture
 

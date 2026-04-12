@@ -1,0 +1,42 @@
+# Core agent framework
+langgraph>=0.2.0
+langchain-anthropic>=0.2.0
+langchain-core>=0.3.0
+anthropic>=0.40.0
+
+# OpenStack SDK
+openstacksdk>=3.0.0
+keystoneauth1>=5.0.0
+
+# Monitoring integrations
+prometheus-api-client>=0.5.4
+opensearch-py>=2.7.0
+
+# IaC tools (subprocess wrappers — terraform/ansible must be installed separately)
+python-terraform>=0.10.1
+
+# Memory / vector store
+qdrant-client>=1.12.0
+sentence-transformers>=3.3.0
+
+# API server
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+websockets>=14.0
+
+# Config & validation
+pydantic>=2.10.0
+pydantic-settings>=2.7.0
+python-dotenv>=1.0.0
+
+# Utilities
+rich>=13.9.0          # Terminal UI
+typer>=0.13.0         # CLI
+httpx>=0.28.0         # Async HTTP
+tenacity>=9.0.0       # Retry logic
+structlog>=24.4.0     # Structured logging
+
+# Testing
+pytest>=8.3.0
+pytest-asyncio>=0.24.0
+pytest-mock>=3.14.0

@@ -4,7 +4,7 @@ A multi-agent AI system for managing OpenStack infrastructure — built on LangG
 
 ## Architecture
 
-```
+```bash
 Master Orchestrator
 ├── Customer Chatbot Agent     — Natural language VM/network/storage provisioning
 ├── Infra Management Agent     — IaC execution (Terraform / Ansible / OpenStack SDK)
@@ -32,7 +32,7 @@ python main.py --mode server --port 8080
 
 ## Project Structure
 
-```
+```bash
 openstack-ai-agent/
 ├── main.py                        # Entry point (CLI + server)
 ├── requirements.txt

@@ -96,7 +96,7 @@ Every state-changing action goes through three gates:
 ## Environment Variables
 
 | Variable | Description |
-|---|---|
+| --- | --- |
 | `OS_AUTH_URL` | Keystone endpoint |
 | `OS_USERNAME` | OpenStack service account |
 | `OS_PASSWORD` | Service account password |

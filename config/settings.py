@@ -14,9 +14,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class OpenStackSettings(BaseSettings):
-    auth_url: AnyHttpUrl = Field(..., alias="OS_AUTH_URL")
-    username: str = Field(..., alias="OS_USERNAME")
-    password: str = Field(..., alias="OS_PASSWORD")
+    auth_url: AnyHttpUrl = Field("http://localhost:5000/v3", alias="OS_AUTH_URL")
+    username: str = Field("admin", alias="OS_USERNAME")
+    password: str = Field("admin", alias="OS_PASSWORD")
     project_name: str = Field("admin", alias="OS_PROJECT_NAME")
     user_domain_name: str = Field("Default", alias="OS_USER_DOMAIN_NAME")
     project_domain_name: str = Field("Default", alias="OS_PROJECT_DOMAIN_NAME")
@@ -37,39 +37,37 @@ class OpenStackSettings(BaseSettings):
 
 
 class MonitoringSettings(BaseSettings):
-    prometheus_url: AnyHttpUrl = Field(..., alias="PROMETHEUS_URL")
-    opensearch_url: AnyHttpUrl = Field(..., alias="OPENSEARCH_URL")
+    prometheus_url: AnyHttpUrl = Field("http://localhost:9090", alias="PROMETHEUS_URL")
+    opensearch_url: AnyHttpUrl = Field("http://localhost:9200", alias="OPENSEARCH_URL")
     opensearch_username: str = Field("admin", alias="OPENSEARCH_USERNAME")
-    opensearch_password: str = Field(..., alias="OPENSEARCH_PASSWORD")
+    opensearch_password: str = Field("admin", alias="OPENSEARCH_PASSWORD")
 
     model_config = SettingsConfigDict(env_file="config/.env", extra="ignore")
 
 
 class VectorDBSettings(BaseSettings):
-    qdrant_url: AnyHttpUrl = Field(..., alias="QDRANT_URL")
+    qdrant_url: AnyHttpUrl = Field("http://localhost:6333", alias="QDRANT_URL")
     qdrant_collection: str = Field("openstack_knowledge", alias="QDRANT_COLLECTION")
 
     model_config = SettingsConfigDict(env_file="config/.env", extra="ignore")
 
 
 class AgentSettings(BaseSettings):
-    anthropic_api_key: str = Field(..., alias="ANTHROPIC_API_KEY")
-    claude_model: str = Field("claude-sonnet-4-5", alias="CLAUDE_MODEL")
+    anthropic_api_key: str = Field("sk-ant-test-key", alias="ANTHROPIC_API_KEY")
+    claude_model: str = Field("claude-3-5-sonnet-20241022", alias="CLAUDE_MODEL")
 
     # Safety
     dry_run: bool = Field(False, alias="AGENT_DRY_RUN")
     max_batch_size: int = Field(10, alias="AGENT_MAX_BATCH_SIZE")
-    approval_required: List[str] = Field(
-        default=["delete_instance", "delete_volume", "delete_network"],
+    approval_required_str: str = Field(
+        default="delete_instance,delete_volume,delete_network",
         alias="APPROVAL_REQUIRED",
     )
 
-    @field_validator("approval_required", mode="before")
-    @classmethod
-    def parse_approval_list(cls, v):
-        if isinstance(v, str):
-            return [item.strip() for item in v.split(",") if item.strip()]
-        return v
+    @property
+    def approval_required(self) -> List[str]:
+        """Parse approval_required from comma-separated string."""
+        return [item.strip() for item in self.approval_required_str.split(",") if item.strip()]
 
     model_config = SettingsConfigDict(env_file="config/.env", extra="ignore")
 
@@ -77,7 +75,7 @@ class AgentSettings(BaseSettings):
 class APISettings(BaseSettings):
     host: str = Field("0.0.0.0", alias="API_HOST")
     port: int = Field(8080, alias="API_PORT")
-    secret_key: str = Field(..., alias="API_SECRET_KEY")
+    secret_key: str = Field("test-secret-key", alias="API_SECRET_KEY")
 
     model_config = SettingsConfigDict(env_file="config/.env", extra="ignore")
 

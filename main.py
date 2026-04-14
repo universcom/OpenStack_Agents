@@ -204,6 +204,8 @@ def main(
     user_id: str = typer.Option("engineer", "--user", "-u", help="User ID"),
     project_id: Optional[str] = typer.Option(None, "--project", "-p", help="OpenStack project ID"),
     log_level: str = typer.Option("WARNING", "--log-level", "-l", help="Logging level"),
+    host: str = typer.Option("0.0.0.0", "--host", "-h", help="Server host (server mode only)"),
+    port: int = typer.Option(8080, "--port", help="Server port (server mode only)"),
 ):
     """OpenStack AI Agent — multi-agent infrastructure management."""
     _configure_logging(log_level)
@@ -211,9 +213,7 @@ def main(
     if mode == "cli":
         asyncio.run(_run_cli(user_id=user_id, project_id=project_id))
     elif mode == "server":
-        from config.settings import get_settings
-        settings = get_settings()
-        _run_server(host=settings.api.host, port=settings.api.port)
+        _run_server(host=host, port=port)
     elif mode == "demo":
         asyncio.run(_run_demo())
     else:

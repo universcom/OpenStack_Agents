@@ -25,3 +25,6 @@ venv/
 # Store files
 *.store
 .DS_Store
+
+# Local docs
+CODE_OVERVIEW.md

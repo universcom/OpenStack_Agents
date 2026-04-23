@@ -1,15 +1,7 @@
 import { ref, computed } from 'vue'
-import type { ChatMessage, AppSettings } from '../types'
+import type { ChatMessage, AppSettings, StoredMessage } from '../types'
 import { sendMessage } from '../api/client'
 
-/**
- * Manages the state and logic for a single interactive chat session.
- *
- * Returns reactive state (messages, loading, error) and two actions:
- *   send()         — appends the user message, calls the API, appends the response.
- *   clearSession() — wipes history and resets the session ID so the next message
- *                    starts a brand-new conversation thread.
- */
 export function useChat() {
   const messages  = ref<ChatMessage[]>([])
   const sessionId = ref<string | null>(null)
@@ -21,7 +13,6 @@ export function useChat() {
   async function send(text: string, settings: AppSettings) {
     if (!text.trim() || isLoading.value) return
 
-    // Immediately append the user bubble so the UI feels responsive.
     messages.value.push({
       id:        crypto.randomUUID(),
       role:      'user',
@@ -40,7 +31,6 @@ export function useChat() {
         session_id: sessionId.value ?? undefined,
       })
 
-      // Store the returned session ID so subsequent turns share the same thread.
       sessionId.value = result.session_id
 
       messages.value.push({
@@ -64,9 +54,15 @@ export function useChat() {
     error.value     = null
   }
 
+  function loadSession(saved: StoredMessage[], savedId: string | null) {
+    messages.value  = saved.map(m => ({ ...m, timestamp: new Date(m.timestamp) }))
+    sessionId.value = savedId
+    error.value     = null
+  }
+
   function clearError() {
     error.value = null
   }
 
-  return { messages, sessionId, isLoading, error, hasMessages, send, clearSession, clearError }
+  return { messages, sessionId, isLoading, error, hasMessages, send, clearSession, loadSession, clearError }
 }

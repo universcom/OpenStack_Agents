@@ -1,5 +1,6 @@
 <script setup lang="ts">
-// Connection status is null = not yet checked, true = online, false = offline.
+import ConnectionPill from './ConnectionPill.vue'
+
 defineProps<{
   isConnected: boolean | null
   isChecking:  boolean
@@ -7,46 +8,20 @@ defineProps<{
 </script>
 
 <template>
-  <header class="flex items-center justify-between px-5 py-3 bg-zinc-900 border-b border-zinc-800 shrink-0 select-none">
-
-    <!-- Brand -->
+  <header class="flex items-center justify-between px-6 h-14 border-b border-[rgba(255,255,255,0.06)] shrink-0 select-none bg-[#0d0d0d]">
     <div class="flex items-center gap-3">
-      <div class="w-8 h-8 rounded-lg bg-cyan-500/15 border border-cyan-500/25 flex items-center justify-center shrink-0">
-        <!-- Server/cloud icon -->
-        <svg class="w-4 h-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+      <div class="w-7 h-7 rounded-lg bg-cyan-500/[0.12] border border-cyan-500/[0.2] flex items-center justify-center shrink-0">
+        <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
           <path stroke-linecap="round" stroke-linejoin="round"
-            d="M5 12H3a9 9 0 1018 0h-2M12 3v9m0 0l-3-3m3 3l3-3" />
+            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
         </svg>
       </div>
-      <div class="leading-none">
-        <p class="text-sm font-semibold text-zinc-100">OpenStack AI Agent</p>
-        <p class="text-xs text-zinc-500 mt-0.5">Multi-agent infrastructure management</p>
+      <div class="flex items-baseline gap-2">
+        <span class="text-[13px] font-semibold text-[#f0f0f0] tracking-tight">OpenStack AI Agent</span>
+        <span class="text-[11px] text-[#3a3a3a] hidden sm:inline">Multi-agent infrastructure</span>
       </div>
     </div>
 
-    <!-- Connection pill -->
-    <div class="flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full border"
-      :class="{
-        'border-yellow-500/30 bg-yellow-500/10 text-yellow-400': isChecking,
-        'border-green-500/30 bg-green-500/10 text-green-400':   !isChecking && isConnected === true,
-        'border-red-500/30   bg-red-500/10   text-red-400':     !isChecking && isConnected === false,
-        'border-zinc-700     bg-zinc-800     text-zinc-500':    !isChecking && isConnected === null,
-      }"
-    >
-      <!-- Animated pulse for checking / connected, static for others -->
-      <span class="w-1.5 h-1.5 rounded-full"
-        :class="{
-          'bg-yellow-400 animate-pulse': isChecking,
-          'bg-green-400':  !isChecking && isConnected === true,
-          'bg-red-400':    !isChecking && isConnected === false,
-          'bg-zinc-600':   !isChecking && isConnected === null,
-        }"
-      />
-      <span v-if="isChecking">Checking…</span>
-      <span v-else-if="isConnected === true">Connected</span>
-      <span v-else-if="isConnected === false">Disconnected</span>
-      <span v-else>Not checked</span>
-    </div>
-
+    <ConnectionPill :is-connected="isConnected" :is-checking="isChecking" />
   </header>
 </template>

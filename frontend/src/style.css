@@ -2,42 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background: #141414;
+  color: #f0f0f0;
+}
+* { box-sizing: border-box; }
+
 /* ── Scrollbar ────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar        { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track  { background: transparent; }
-::-webkit-scrollbar-thumb  { background: #3f3f46; border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: #52525b; }
+::-webkit-scrollbar-thumb  { background: rgba(255,255,255,0.2); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.35); }
 
-/* ── Base ─────────────────────────────────────────────────────────────────── */
-body { font-family: 'Inter', system-ui, sans-serif; }
-* { box-sizing: border-box; }
-
-/* ── Prose overrides for dark chat bubbles ───────────────────────────────── */
+/* ── Prose overrides for dark chat ──────────────────────────────────────── */
 .prose-chat {
-  --tw-prose-body:         #e4e4e7;
-  --tw-prose-headings:     #f4f4f5;
-  --tw-prose-bold:         #f4f4f5;
-  --tw-prose-links:        #22d3ee;
-  --tw-prose-code:         #67e8f9;
-  --tw-prose-pre-bg:       #0d1117;
-  --tw-prose-bullets:      #71717a;
-  --tw-prose-counters:     #71717a;
-  --tw-prose-hr:           #3f3f46;
-  --tw-prose-quotes:       #a1a1aa;
-  --tw-prose-quote-borders:#3f3f46;
+  --tw-prose-body:          #d8d8d8;
+  --tw-prose-headings:      #f5f5f5;
+  --tw-prose-bold:          #f5f5f5;
+  --tw-prose-links:         #22d3ee;
+  --tw-prose-code:          #67e8f9;
+  --tw-prose-pre-bg:        #0d1117;
+  --tw-prose-bullets:       #888;
+  --tw-prose-counters:      #888;
+  --tw-prose-hr:            rgba(255,255,255,0.15);
+  --tw-prose-quotes:        #aaa;
+  --tw-prose-quote-borders: rgba(255,255,255,0.2);
 }
 
 .prose-chat pre {
-  background: #0d1117!important;
-  border: 1px solid #30363d;
-  border-radius: 8px;
+  background: #0d1117 !important;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
 }
 
 .prose-chat code:not(pre code) {
-  background: #1c1c1f;
-  border: 1px solid #3f3f46;
-  padding: 0.15em 0.4em;
-  border-radius: 4px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 0.15em 0.45em;
+  border-radius: 5px;
   font-size: 0.82em;
 }
 
@@ -49,6 +53,43 @@ body { font-family: 'Inter', system-ui, sans-serif; }
   0%, 80%, 100% { transform: translateY(0);    opacity: 0.4; }
   40%            { transform: translateY(-5px); opacity: 1;   }
 }
-.dot-1 { animation: bounce-dot 1.2s ease-in-out infinite 0ms; }
-.dot-2 { animation: bounce-dot 1.2s ease-in-out infinite 200ms; }
-.dot-3 { animation: bounce-dot 1.2s ease-in-out infinite 400ms; }
+.dot-1 { animation: bounce-dot 1.4s ease-in-out infinite 0ms;   }
+.dot-2 { animation: bounce-dot 1.4s ease-in-out infinite 200ms; }
+.dot-3 { animation: bounce-dot 1.4s ease-in-out infinite 400ms; }
+
+/* ── Message fade-in ─────────────────────────────────────────────────────── */
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+.msg-in { animation: msg-in 0.22s ease-out both; }
+
+/* ── Input card with focus glow ─────────────────────────────────────────── */
+.input-card {
+  border: 1px solid rgba(255,255,255,0.18);
+  background: #242424;
+  border-radius: 16px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.input-card:focus-within {
+  border-color: rgba(6,182,212,0.55);
+  box-shadow: 0 0 0 3px rgba(6,182,212,0.1);
+}
+
+/* ── Shared form input style ─────────────────────────────────────────────── */
+.field-input {
+  width: 100%;
+  background: #2a2a2a;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #f0f0f0;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.field-input::placeholder { color: #777; }
+.field-input:focus {
+  border-color: rgba(6,182,212,0.55);
+  box-shadow: 0 0 0 2px rgba(6,182,212,0.12);
+}

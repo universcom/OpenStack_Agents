@@ -30,6 +30,27 @@ export interface ChatResponse {
   pending_approvals?: unknown[]
 }
 
+// ── Session history types ─────────────────────────────────────────────────────
+
+/** Serialised form of ChatMessage stored in localStorage (Date → ISO string). */
+export interface StoredMessage {
+  id: string
+  role: 'user' | 'agent'
+  content: string
+  timestamp: string
+  success?: boolean
+  hasPendingApprovals?: boolean
+}
+
+/** One entry in the local chat history list. */
+export interface SessionEntry {
+  id: string               // local UUID (not the backend session_id)
+  sessionId: string | null // backend session_id
+  title: string            // first user message, truncated
+  createdAt: string        // ISO string
+  messages: StoredMessage[]
+}
+
 // ── UI state types ────────────────────────────────────────────────────────────
 
 /** User-configurable connection and identity settings. */

@@ -1,4 +1,8 @@
-# Byte-compiled / optimized / DLL files
+# ══════════════════════════════════════════════════════════════════════════════
+# Python / Backend
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Compiled bytecode
 __pycache__/
 *.py[cod]
 *.pyo
@@ -10,21 +14,104 @@ build/
 dist/
 *.egg-info/
 *.egg
+MANIFEST
+wheels/
+sdist/
+*.whl
 
-# Virtual environment
+# Virtual environments
+.venv/
 venv/
-.env
+env/
+ENV/
+.env.bak
 
-# IDE files
-.idea/
-.vscode/
+# Environment / secrets — never commit credentials or API keys
+.env
+.env.*
+!.env.example
+
+# Test & coverage artefacts
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.coveragerc
+nosetests.xml
+test-results/
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+.pyre/
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+*.ipynb
 
 # Logs
 *.log
+logs/
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Node / Frontend
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Installed packages — always re-install from package.json
+frontend/node_modules/
+
+# Vite / build output
+frontend/dist/
+frontend/dist-ssr/
+
+# TypeScript incremental build info
+frontend/**/*.tsbuildinfo
+frontend/node_modules/.tmp/
+
+# Local environment overrides
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# Vite cache
+frontend/.vite/
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Editors & OS
+# ══════════════════════════════════════════════════════════════════════════════
+
+# JetBrains IDEs (PyCharm, WebStorm, etc.)
+.idea/
+
+# VS Code — keep .vscode/settings.json out if it contains machine-specific paths
+.vscode/
+!.vscode/extensions.json
+
+# macOS metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows metadata
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ══════════════════════════════════════════════════════════════════════════════
+# Misc project artefacts
+# ══════════════════════════════════════════════════════════════════════════════
 
 # Store files
 *.store
-.DS_Store
 
-# Local docs
+# Local docs (generated, not source-controlled)
 CODE_OVERVIEW.md
+
+# Docker override files with local secrets
+docker-compose.override.yml

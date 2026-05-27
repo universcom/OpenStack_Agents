@@ -7,10 +7,12 @@ All values are read from environment variables / .env file.
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import List
+from typing import List, Literal, Optional
 
 from pydantic import AnyHttpUrl, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+LLMProvider = Literal["anthropic", "openrouter", "ollama"]
 
 
 class OpenStackSettings(BaseSettings):
@@ -53,8 +55,21 @@ class VectorDBSettings(BaseSettings):
 
 
 class AgentSettings(BaseSettings):
+    # LLM provider selection. Controls which backend agents/base.py instantiates.
+    provider: LLMProvider = Field("anthropic", alias="LLM_PROVIDER")
+
+    # Model identifier — interpretation depends on provider:
+    #   anthropic  : "claude-haiku-4-5-20251001", "claude-sonnet-4-6", ...
+    #   openrouter : "meta-llama/llama-3.3-70b-instruct:free", "qwen/qwen-2.5-72b-instruct:free", ...
+    #   ollama     : "llama3.1:8b", "qwen2.5:14b", ...
+    # Falls back to CLAUDE_MODEL for backward compatibility.
+    model: Optional[str] = Field(None, alias="LLM_MODEL")
+    claude_model: str = Field("claude-haiku-4-5-20251001", alias="CLAUDE_MODEL")
+
+    # Provider-specific credentials / endpoints
     anthropic_api_key: str = Field("sk-ant-test-key", alias="ANTHROPIC_API_KEY")
-    claude_model: str = Field("claude-3-5-sonnet-20241022", alias="CLAUDE_MODEL")
+    openrouter_api_key: str = Field("", alias="OPENROUTER_API_KEY")
+    ollama_base_url: str = Field("http://localhost:11434", alias="OLLAMA_BASE_URL")
 
     # Safety
     dry_run: bool = Field(False, alias="AGENT_DRY_RUN")
@@ -68,6 +83,11 @@ class AgentSettings(BaseSettings):
     def approval_required(self) -> List[str]:
         """Parse approval_required from comma-separated string."""
         return [item.strip() for item in self.approval_required_str.split(",") if item.strip()]
+
+    @property
+    def effective_model(self) -> str:
+        """Resolved model name: LLM_MODEL if set, else CLAUDE_MODEL."""
+        return self.model or self.claude_model
 
     model_config = SettingsConfigDict(env_file="config/.env", extra="ignore")
 

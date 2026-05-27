@@ -13,11 +13,45 @@ import uuid
 from typing import Any, Dict, List, Optional, Sequence
 
 import structlog
-from langchain_anthropic import ChatAnthropic
+from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
 from langchain_core.tools import BaseTool
+from langchain_core.runnables import Runnable
 
-from config.settings import get_settings
+from config.settings import AgentSettings, get_settings
+
+
+def _build_llm(cfg: AgentSettings) -> BaseChatModel:
+    """Instantiate the chat LLM selected by LLM_PROVIDER.
+
+    Imports are deferred so each provider's package is only required when used.
+    """
+    model = cfg.effective_model
+    if cfg.provider == "anthropic":
+        from langchain_anthropic import ChatAnthropic
+        return ChatAnthropic(
+            model=model,
+            api_key=cfg.anthropic_api_key,
+            max_tokens=4096,
+        )
+    if cfg.provider == "openrouter":
+        from langchain_openai import ChatOpenAI
+        if not cfg.openrouter_api_key:
+            raise RuntimeError("OPENROUTER_API_KEY is required when LLM_PROVIDER=openrouter")
+        return ChatOpenAI(
+            model=model,
+            api_key=cfg.openrouter_api_key,
+            base_url="https://openrouter.ai/api/v1",
+            max_tokens=4096,
+        )
+    if cfg.provider == "ollama":
+        from langchain_ollama import ChatOllama
+        return ChatOllama(
+            model=model,
+            base_url=cfg.ollama_base_url,
+            num_predict=4096,
+        )
+    raise RuntimeError(f"Unknown LLM_PROVIDER: {cfg.provider!r}")
 
 logger = structlog.get_logger(__name__)
 
@@ -71,11 +105,7 @@ class BaseAgent(abc.ABC):
         self._settings = get_settings()
         self._log = structlog.get_logger(self.__class__.__name__)
 
-        self._llm = ChatAnthropic(
-            model=self._settings.agent.claude_model,
-            api_key=self._settings.agent.anthropic_api_key,
-            max_tokens=4096,
-        )
+        self._llm: BaseChatModel = _build_llm(self._settings.agent)
 
     # ── Abstract interface ──────────────────────────────────────────────────
 
@@ -136,7 +166,7 @@ class BaseAgent(abc.ABC):
         messages.append(HumanMessage(content=user_content))
         return messages
 
-    def _bind_tools(self) -> ChatAnthropic:
+    def _bind_tools(self) -> Runnable:
         """Return LLM with tools bound (for tool-calling loop)."""
         if self.tools:
             return self._llm.bind_tools(self.tools)

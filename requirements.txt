@@ -1,7 +1,10 @@
 # Core agent framework
 langgraph>=0.2.0
-langchain-anthropic>=0.2.0
 langchain-core>=0.3.0
+# LLM providers — pick whichever you set in LLM_PROVIDER (.env)
+langchain-anthropic>=0.2.0   # provider=anthropic
+langchain-openai>=0.2.0      # provider=openrouter (OpenAI-compatible API)
+langchain-ollama>=0.2.0      # provider=ollama (local models)
 anthropic>=0.40.0
 
 # OpenStack SDK

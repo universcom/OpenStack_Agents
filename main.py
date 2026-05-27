@@ -32,6 +32,18 @@ from typing import Optional
 import structlog
 # typer builds the CLI from typed function signatures — no argparse boilerplate.
 import typer
+from pydantic import BaseModel as PydanticModel
+
+
+# Request body for POST /chat. Defined at module scope so FastAPI's
+# get_type_hints() resolution succeeds under `from __future__ import annotations`
+# (a local-to-_run_server class would be invisible to FastAPI's introspection,
+# causing it to mis-classify `req` as a query parameter).
+class ChatRequest(PydanticModel):
+    message: str
+    user_id: str = "anonymous"
+    project_id: Optional[str] = None
+    session_id: Optional[str] = None
 
 # Rich is a third-party library that adds colour, formatting, and layout to terminal output.
 # It replaces plain print() calls with styled text, tables, progress bars, panels, and more,
@@ -305,7 +317,6 @@ def _run_server(host: str, port: int):
     import uvicorn
     from fastapi import FastAPI
     from fastapi.middleware.cors import CORSMiddleware
-    from pydantic import BaseModel as PydanticModel
 
     from orchestrator.master import MasterOrchestrator
 
@@ -330,15 +341,6 @@ def _run_server(host: str, port: int):
     # The underscore prefix prevents FastAPI from treating this as a route
     # dependency when it is closed over inside the route functions below.
     _orchestrator = MasterOrchestrator()
-
-    # Pydantic model that describes the JSON body expected by POST /chat.
-    # FastAPI validates incoming requests against this schema automatically
-    # and returns HTTP 422 if required fields are missing or have wrong types.
-    class ChatRequest(PydanticModel):
-        message: str                    # The natural-language request from the client.
-        user_id: str = "anonymous"      # Caller identity; defaults to "anonymous" if omitted.
-        project_id: Optional[str] = None   # OpenStack project scope; None = orchestrator default.
-        session_id: Optional[str] = None   # Omit to start a new conversation; include to continue one.
 
     # ── POST /chat ────────────────────────────────────────────────────────────
     # Main endpoint: accepts a user message and returns the agent's response.

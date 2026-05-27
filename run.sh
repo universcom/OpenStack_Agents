@@ -48,15 +48,58 @@ done
 # Python virtual environment
 PYTHON="$ROOT/.venv/bin/python"
 if [[ ! -x "$PYTHON" ]]; then
-  err "Virtual environment not found at .venv/"
-  err "Run:  python -m venv .venv && .venv/bin/pip install -r requirements.txt"
-  exit 1
+  warn "Virtual environment not found at .venv/"
+  read -r -p "$(echo -e "${YELLOW}[run.sh]${RESET} Create it now and install requirements? [y/N] ")" reply
+  case "$reply" in
+    y|Y|yes|YES|Yes)
+      info "Creating virtual environment at .venv/ …"
+      python3 -m venv "$ROOT/.venv"
+      info "Installing requirements…"
+      "$PYTHON" -m pip install --upgrade pip
+      "$PYTHON" -m pip install -r "$ROOT/requirements.txt"
+      ok "Virtual environment ready."
+      ;;
+    *)
+      err "Aborted. Virtual environment is required to run the backend."
+      exit 1
+      ;;
+  esac
 fi
 
 # Node / npm for the frontend
 if ! command -v npm &>/dev/null; then
-  err "npm not found. Install Node.js from https://nodejs.org"
-  exit 1
+  warn "npm not found on PATH (Node.js is required for the frontend)."
+  read -r -p "$(echo -e "${YELLOW}[run.sh]${RESET} Try to install Node.js automatically now? [y/N] ")" reply
+  case "$reply" in
+    y|Y|yes|YES|Yes)
+      if command -v brew &>/dev/null; then
+        info "Installing Node.js via Homebrew…"
+        brew install node
+      elif command -v apt-get &>/dev/null; then
+        info "Installing Node.js via apt-get…"
+        sudo apt-get update && sudo apt-get install -y nodejs npm
+      elif command -v dnf &>/dev/null; then
+        info "Installing Node.js via dnf…"
+        sudo dnf install -y nodejs npm
+      elif command -v pacman &>/dev/null; then
+        info "Installing Node.js via pacman…"
+        sudo pacman -S --noconfirm nodejs npm
+      else
+        err "No supported package manager found (brew/apt-get/dnf/pacman)."
+        err "Install Node.js manually from https://nodejs.org"
+        exit 1
+      fi
+      if ! command -v npm &>/dev/null; then
+        err "npm still not found after install. Aborting."
+        exit 1
+      fi
+      ok "Node.js / npm installed."
+      ;;
+    *)
+      err "Aborted. Node.js is required to run the frontend."
+      exit 1
+      ;;
+  esac
 fi
 
 # Frontend dependencies

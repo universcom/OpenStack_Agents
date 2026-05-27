@@ -75,7 +75,6 @@ class BaseAgent(abc.ABC):
             model=self._settings.agent.claude_model,
             api_key=self._settings.agent.anthropic_api_key,
             max_tokens=4096,
-            temperature=0,  # deterministic for infra tasks
         )
 
     # ── Abstract interface ──────────────────────────────────────────────────
